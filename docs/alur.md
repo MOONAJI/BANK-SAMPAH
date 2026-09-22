@@ -59,55 +59,55 @@ BANK-SAMPAH/
 ### Penjelasan Detail Tiap File:
 
 #### Root & Konfigurasi
-- [README.md](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/README.md): Dokumentasi dasar proyek serta petunjuk instalasi awal.
-- [package.json](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/package.json): Berisi manifes proyek Node.js, dependensi (`express`, `mongoose`, `jsonwebtoken`, `bcryptjs`, `cors`, `dotenv`), serta skrip perintah (`start`, `dev`, `seed`).
-- [index.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/index.js): File utama aplikasi. Bertugas menginisialisasi Express, menghubungkan database via [connectDB](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/config/db.js), mengaktifkan middleware global (`cors`, parser JSON/urlencoded), memasang rute modul API, serta mendaftarkan handler error global.
-- [db.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/config/db.js): Mengelola siklus koneksi ke MongoDB menggunakan Mongoose berdasarkan variabel lingkungan `MONGO_URI`.
+- [README.md]: Dokumentasi dasar proyek serta petunjuk instalasi awal.
+- [package.json]: Berisi manifes proyek Node.js, dependensi (`express`, `mongoose`, `jsonwebtoken`, `bcryptjs`, `cors`, `dotenv`), serta skrip perintah (`start`, `dev`, `seed`).
+- [index.js]: File utama aplikasi. Bertugas menginisialisasi Express, menghubungkan database via [connectDB], mengaktifkan middleware global (`cors`, parser JSON/urlencoded), memasang rute modul API, serta mendaftarkan handler error global.
+- [db.js]: Mengelola siklus koneksi ke MongoDB menggunakan Mongoose berdasarkan variabel lingkungan `MONGO_URI`.
 
 #### Utilitas & Middleware
-- [codeGenerator.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/utils/codeGenerator.js): Menyediakan fungsi pembantu `generateTransactionCode(prefix)` untuk membuat kode transaksi berformat otomatis (contoh: `DEP-20260913-1234` untuk setoran dan `WD-20260913-5678` untuk penarikan).
-- [authMiddleware.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/middleware/authMiddleware.js):
+- [codeGenerator.js]: Menyediakan fungsi pembantu `generateTransactionCode(prefix)` untuk membuat kode transaksi berformat otomatis (contoh: `DEP-20260913-1234` untuk setoran dan `WD-20260913-5678` untuk penarikan).
+- [authMiddleware.js]:
   - `generateToken(id, role)`: Membuat JWT token berdurasi aktif 7 hari.
   - `protect`: Memeriksa header `Authorization: Bearer <token>`, memvalidasi token, dan melampirkan objek pengguna ke `req.user`.
   - `authorize(...roles)`: Menjaga endpoint agar hanya dapat diakses oleh peran tertentu (contoh: hanya `admin` atau `petugas`).
-- [errorMiddleware.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/middleware/errorMiddleware.js):
+- [errorMiddleware.js]:
   - `notFound`: Menangkap URL yang tidak terdaftar dan menghasilkan pesan 404 terstruktur.
   - `errorHandler`: Menangkap exception server, memformat error validasi Mongoose (seperti duplicate email atau format ObjectId salah) agar ramah klien.
 
 #### Model Data (MongoDB Schema)
-- [User.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/models/User.js): Menyimpan data akun (`name`, `email`, `password`, `phone`, `role`, `balance`, `address`, `ewallet_info`). Memiliki hook otomatis Mongoose `pre('save')` untuk mengenkripsi password sebelum tersimpan ke database, serta method `matchPassword()`.
-- [WasteCategory.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/models/WasteCategory.js): Master data jenis sampah (`name`, `category_group` [Plastik/Kertas/Logam/Kaca/Lainnya], `price_per_kg`, `unit`, `isActive`).
-- [DepositTransaction.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/models/DepositTransaction.js): Menyimpan data transaksi setoran sampah (`transaction_code`, relasi `nasabah_id`, relasi `petugas_id`, array `items` [ID sampah, nama, harga satuan saat transaksi, berat kg, subtotal], `total_weight_kg`, `total_amount`).
-- [WithdrawalTransaction.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/models/WithdrawalTransaction.js): Menyimpan pengajuan penarikan saldo (`transaction_code`, `nasabah_id`, `amount`, `method` [TUNAI/E_WALLET/BANK_TRANSFER], rekening/nomor tujuan, `status` [PENDING/APPROVED/REJECTED], relasi petugas pemroses `processed_by`).
-- [LedgerEntry.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/models/LedgerEntry.js): Log audit pembukuan saldo nasabah (*double-entry ledger / passbook*). Setiap kali saldo bertambah (CREDIT) atau berkurang (DEBIT), mutasi dicatat bersama `balance_before` dan `balance_after`.
+- [User.js]: Menyimpan data akun (`name`, `email`, `password`, `phone`, `role`, `balance`, `address`, `ewallet_info`). Memiliki hook otomatis Mongoose `pre('save')` untuk mengenkripsi password sebelum tersimpan ke database, serta method `matchPassword()`.
+- [WasteCategory.js]: Master data jenis sampah (`name`, `category_group` [Plastik/Kertas/Logam/Kaca/Lainnya], `price_per_kg`, `unit`, `isActive`).
+- [DepositTransaction.js]: Menyimpan data transaksi setoran sampah (`transaction_code`, relasi `nasabah_id`, relasi `petugas_id`, array `items` [ID sampah, nama, harga satuan saat transaksi, berat kg, subtotal], `total_weight_kg`, `total_amount`).
+- [WithdrawalTransaction.js]: Menyimpan pengajuan penarikan saldo (`transaction_code`, `nasabah_id`, `amount`, `method` [TUNAI/E_WALLET/BANK_TRANSFER], rekening/nomor tujuan, `status` [PENDING/APPROVED/REJECTED], relasi petugas pemroses `processed_by`).
+- [LedgerEntry.js]: Log audit pembukuan saldo nasabah (*double-entry ledger / passbook*). Setiap kali saldo bertambah (CREDIT) atau berkurang (DEBIT), mutasi dicatat bersama `balance_before` dan `balance_after`.
 
 #### Rute & Pengontrol (Routes & Controllers)
 - **Modul Autentikasi**:
-  - [authRoutes.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/routes/authRoutes.js): Rute `/api/auth/register`, `/login`, dan `/me`.
-  - [authController.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/controllers/authController.js): Mengatur pendaftaran akun nasabah, pengecekan kecocokan email/password, pembentukan token JWT, serta pembaruan profil pengguna.
+  - [authRoutes.js]: Rute `/api/auth/register`, `/login`, dan `/me`.
+  - [authController.js]: Mengatur pendaftaran akun nasabah, pengecekan kecocokan email/password, pembentukan token JWT, serta pembaruan profil pengguna.
 - **Modul Pengguna**:
-  - [userRoutes.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/routes/userRoutes.js): Rute `/api/users` dan `/api/users/:id`.
-  - [userController.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/controllers/userController.js): Mengelola operasi CRUD akun, pencarian nasabah berdasarkan nama/email/telepon, serta pengubahan peran oleh Admin.
+  - [userRoutes.js]: Rute `/api/users` dan `/api/users/:id`.
+  - [userController.js]: Mengelola operasi CRUD akun, pencarian nasabah berdasarkan nama/email/telepon, serta pengubahan peran oleh Admin.
 - **Modul Jenis Sampah**:
-  - [wasteRoutes.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/routes/wasteRoutes.js): Rute `/api/waste-categories`. Publik dapat melihat katalog, sedangkan penambahan/perubahan harga dibatasi untuk Admin.
-  - [wasteController.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/controllers/wasteController.js): Pengelolaan katalog harga per kg sampah, termasuk fitur *soft-delete* agar riwayat transaksi lama tidak rusak.
+  - [wasteRoutes.js]: Rute `/api/waste-categories`. Publik dapat melihat katalog, sedangkan penambahan/perubahan harga dibatasi untuk Admin.
+  - [wasteController.js]: Pengelolaan katalog harga per kg sampah, termasuk fitur *soft-delete* agar riwayat transaksi lama tidak rusak.
 - **Modul Setoran (Deposit)**:
-  - [depositRoutes.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/routes/depositRoutes.js): Rute `/api/deposits` dan `/api/deposits/my-deposits`.
-  - [depositController.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/controllers/depositController.js): Mesin kalkulasi setoran. Mengunci harga saat transaksi terjadi, menghitung subtotal dan berat kumulatif, menambah saldo nasabah secara otomatis, dan merekam entri CREDIT pada buku tabungan.
+  - [depositRoutes.js]: Rute `/api/deposits` dan `/api/deposits/my-deposits`.
+  - [depositController.js]: Mesin kalkulasi setoran. Mengunci harga saat transaksi terjadi, menghitung subtotal dan berat kumulatif, menambah saldo nasabah secara otomatis, dan merekam entri CREDIT pada buku tabungan.
 - **Modul Penarikan (Withdrawal)**:
-  - [withdrawalRoutes.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/routes/withdrawalRoutes.js): Rute `/api/withdrawals` dan `/api/withdrawals/:id/status`.
-  - [withdrawalController.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/controllers/withdrawalController.js): Mengatur validasi kecukupan saldo saat nasabah mengajukan penarikan, serta pemrosesan persetujuan (APPROVED) yang otomatis memotong saldo nasabah dan mencatat DEBIT pada buku tabungan.
+  - [withdrawalRoutes.js]: Rute `/api/withdrawals` dan `/api/withdrawals/:id/status`.
+  - [withdrawalController.js]: Mengatur validasi kecukupan saldo saat nasabah mengajukan penarikan, serta pemrosesan persetujuan (APPROVED) yang otomatis memotong saldo nasabah dan mencatat DEBIT pada buku tabungan.
 - **Modul Buku Tabungan (Ledger)**:
-  - [ledgerRoutes.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/routes/ledgerRoutes.js): Rute `/api/ledger/my-history` dan `/api/ledger/user/:userId`.
-  - [ledgerController.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/controllers/ledgerController.js): Menampilkan riwayat arus kas saldo nasabah (kredit dari setoran sampah, debit dari penarikan dana).
+  - [ledgerRoutes.js]: Rute `/api/ledger/my-history` dan `/api/ledger/user/:userId`.
+  - [ledgerController.js]: Menampilkan riwayat arus kas saldo nasabah (kredit dari setoran sampah, debit dari penarikan dana).
 - **Modul Laporan & Dashboard**:
-  - [reportRoutes.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/routes/reportRoutes.js): Rute `/api/reports/dashboard` dan `/api/reports/waste-summary`.
-  - [reportController.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/controllers/reportController.js): Menjalankan *MongoDB Aggregation Pipeline* untuk menghitung metrik utama: total tonase sampah terkumpul (kg), total perputaran uang setoran (Rp), total dana yang telah ditarik, saldo aktif warga, dan peringkat sampah terbanyak.
+  - [reportRoutes.js]: Rute `/api/reports/dashboard` dan `/api/reports/waste-summary`.
+  - [reportController.js]: Menjalankan *MongoDB Aggregation Pipeline* untuk menghitung metrik utama: total tonase sampah terkumpul (kg), total perputaran uang setoran (Rp), total dana yang telah ditarik, saldo aktif warga, dan peringkat sampah terbanyak.
 
 #### Seeder & Skrip Uji
-- [seed.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/src/seeders/seed.js): Mengisi database lokal dengan data awal siap pakai (1 Admin, 1 Petugas, 2 Nasabah, dan 7 jenis sampah dasar).
-- [test_e2e.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/test_e2e.js): Skrip pengujian alur logika database dari hulu ke hilir (timbang sampah -> akumulasi saldo -> mutasi ledger -> pengajuan pencairan dana -> persetujuan pencairan dana -> pengecekan agregasi).
-- [test_http_endpoints.js](file:///d:/kuliah/pawpawpaw/BANK-SAMPAH/backend/test_http_endpoints.js): Skrip otomatisasi pengujian endpoint jaringan HTTP dengan simulasi request login, Bearer Token, dan proteksi hak akses.
+- [seed.js]: Mengisi database lokal dengan data awal siap pakai (1 Admin, 1 Petugas, 2 Nasabah, dan 7 jenis sampah dasar).
+- [test_e2e.js]: Skrip pengujian alur logika database dari hulu ke hilir (timbang sampah -> akumulasi saldo -> mutasi ledger -> pengajuan pencairan dana -> persetujuan pencairan dana -> pengecekan agregasi).
+- [test_http_endpoints.js]: Skrip otomatisasi pengujian endpoint jaringan HTTP dengan simulasi request login, Bearer Token, dan proteksi hak akses.
 
 ---
 
