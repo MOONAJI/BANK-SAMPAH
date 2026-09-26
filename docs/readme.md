@@ -15,9 +15,12 @@ Proyek ini merupakan **REST API Backend** untuk sistem pengelolaan bank sampah b
 
 ```
 BANK-SAMPAH/
-├── README.md
+├── README.md                          # Dokumentasi utama proyek & informasi tim
 ├── frontend/                          # Folder disiapkan untuk antarmuka klien/UI (masih kosong)
 └── backend/
+    ├── .env.example                   # Contoh konfigurasi variabel lingkungan
+    ├── Dockerfile                     # Konfigurasi container backend
+    ├── compose.yaml                   # Konfigurasi Docker Compose (Backend & MongoDB)
     ├── package.json                   # Konfigurasi dependensi dan skrip proyek
     ├── test_e2e.js                    # Pengujian logika transaksi langsung ke database
     ├── test_http_endpoints.js         # Pengujian endpoint REST API via HTTP client
@@ -29,7 +32,8 @@ BANK-SAMPAH/
         │   └── codeGenerator.js       # Generator kode transaksi unik
         ├── middleware/
         │   ├── authMiddleware.js      # Verifikasi JWT dan otorisasi hak akses (RBAC)
-        │   └── errorMiddleware.js     # Penanganan error global (404 & Mongoose validation)
+        │   ├── errorMiddleware.js     # Penanganan error global (404 & Mongoose validation)
+        │   └── validateMiddleware.js  # Validasi format payload request (body sanitization)
         ├── models/
         │   ├── User.js                # Skema pengguna & method hashing password
         │   ├── WasteCategory.js       # Skema master data kategori & harga sampah
@@ -59,7 +63,9 @@ BANK-SAMPAH/
 ### Penjelasan Detail Tiap File:
 
 #### Root & Konfigurasi
-- [README.md]: Dokumentasi dasar proyek serta petunjuk instalasi awal.
+- [README.md]: Dokumentasi utama repository, informasi anggota tim, deskripsi, teknologi, serta petunjuk instalasi dan pengujian.
+- [.env.example]: Template konfigurasi environment variables (`PORT`, `MONGO_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`).
+- [Dockerfile] & [compose.yaml]: Konfigurasi kontainerisasi aplikasi dan database MongoDB lokal via Docker Compose.
 - [package.json]: Berisi manifes proyek Node.js, dependensi (`express`, `mongoose`, `jsonwebtoken`, `bcryptjs`, `cors`, `dotenv`), serta skrip perintah (`start`, `dev`, `seed`).
 - [index.js]: File utama aplikasi. Bertugas menginisialisasi Express, menghubungkan database via [connectDB], mengaktifkan middleware global (`cors`, parser JSON/urlencoded), memasang rute modul API, serta mendaftarkan handler error global.
 - [db.js]: Mengelola siklus koneksi ke MongoDB menggunakan Mongoose berdasarkan variabel lingkungan `MONGO_URI`.
@@ -73,6 +79,8 @@ BANK-SAMPAH/
 - [errorMiddleware.js]:
   - `notFound`: Menangkap URL yang tidak terdaftar dan menghasilkan pesan 404 terstruktur.
   - `errorHandler`: Menangkap exception server, memformat error validasi Mongoose (seperti duplicate email atau format ObjectId salah) agar ramah klien.
+- [validateMiddleware.js]:
+  - Memvalidasi kelengkapan dan format payload request body sebelum masuk ke controller (seperti validasi data register, login, pembuatan kategori sampah, transaksi setoran, dan penarikan). Menghasilkan pesan error 400 Bad Request yang informatif jika data tidak valid.
 
 #### Model Data (MongoDB Schema)
 - [User.js]: Menyimpan data akun (`name`, `email`, `password`, `phone`, `role`, `balance`, `address`, `ewallet_info`). Memiliki hook otomatis Mongoose `pre('save')` untuk mengenkripsi password sebelum tersimpan ke database, serta method `matchPassword()`.
