@@ -130,15 +130,25 @@ const runHttpTests = async () => {
       }, adminToken);
       console.log('   Approve status:', approveRes.status, 'Message:', approveRes.body.message, 'Remaining Balance:', approveRes.body.nasabah_balance);
 
-      // 8. Siti checks digital passbook (ledger)
+      // 8. Siti checks digital passbook (ledger) with pagination
       console.log('8. Testing GET /api/ledger/my-history (Siti passbook)');
-      const ledgerRes = await request(PORT, 'GET', '/api/ledger/my-history', null, nasabahToken);
-      console.log('   Passbook entries:', ledgerRes.body.count, 'Current balance:', ledgerRes.body.current_balance);
+      const ledgerRes = await request(PORT, 'GET', '/api/ledger/my-history?page=1&limit=5', null, nasabahToken);
+      console.log('   Passbook entries:', ledgerRes.body.count, 'Total entries:', ledgerRes.body.total, 'Current balance:', ledgerRes.body.current_balance);
 
       // 9. Admin checks dashboard report
       console.log('9. Testing GET /api/reports/dashboard');
       const dashRes = await request(PORT, 'GET', '/api/reports/dashboard', null, adminToken);
       console.log('   Dashboard Data:', JSON.stringify(dashRes.body.data));
+
+      // 10. Admin exports deposits report to CSV
+      console.log('10. Testing GET /api/reports/export/deposits (CSV Export)');
+      const exportDepositsRes = await request(PORT, 'GET', '/api/reports/export/deposits', null, adminToken);
+      console.log('   Export Deposits Status:', exportDepositsRes.status, 'Is CSV text:', typeof exportDepositsRes.body === 'string');
+
+      // 11. Admin exports ledger report to CSV
+      console.log('11. Testing GET /api/reports/export/ledger (CSV Export)');
+      const exportLedgerRes = await request(PORT, 'GET', '/api/reports/export/ledger', null, adminToken);
+      console.log('   Export Ledger Status:', exportLedgerRes.status, 'Is CSV text:', typeof exportLedgerRes.body === 'string');
 
       console.log('===========================================================');
       console.log('ALL EXPRESS HTTP API ENDPOINTS TESTED AND WORKING SEAMLESSLY!');

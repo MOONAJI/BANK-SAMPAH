@@ -81,14 +81,28 @@ const getWithdrawals = async (req, res, next) => {
       filter.nasabah_id = req.query.nasabah_id;
     }
 
-    const withdrawals = await WithdrawalTransaction.find(filter)
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 0;
+    const skip = limit > 0 ? (page - 1) * limit : 0;
+
+    const total = await WithdrawalTransaction.countDocuments(filter);
+    let query = WithdrawalTransaction.find(filter)
       .populate('nasabah_id', 'name email phone address balance')
       .populate('processed_by', 'name email')
       .sort({ createdAt: -1 });
 
+    if (limit > 0) {
+      query = query.skip(skip).limit(limit);
+    }
+
+    const withdrawals = await query;
+
     res.status(200).json({
       success: true,
       count: withdrawals.length,
+      total,
+      page: limit > 0 ? page : 1,
+      totalPages: limit > 0 ? Math.ceil(total / limit) : 1,
       data: withdrawals
     });
   } catch (error) {
@@ -103,13 +117,29 @@ const getWithdrawals = async (req, res, next) => {
  */
 const getMyWithdrawals = async (req, res, next) => {
   try {
-    const withdrawals = await WithdrawalTransaction.find({ nasabah_id: req.user._id })
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 0;
+    const skip = limit > 0 ? (page - 1) * limit : 0;
+
+    const filter = { nasabah_id: req.user._id };
+    const total = await WithdrawalTransaction.countDocuments(filter);
+
+    let query = WithdrawalTransaction.find(filter)
       .populate('processed_by', 'name')
       .sort({ createdAt: -1 });
+
+    if (limit > 0) {
+      query = query.skip(skip).limit(limit);
+    }
+
+    const withdrawals = await query;
 
     res.status(200).json({
       success: true,
       count: withdrawals.length,
+      total,
+      page: limit > 0 ? page : 1,
+      totalPages: limit > 0 ? Math.ceil(total / limit) : 1,
       data: withdrawals
     });
   } catch (error) {

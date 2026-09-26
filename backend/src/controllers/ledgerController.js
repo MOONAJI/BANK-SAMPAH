@@ -7,11 +7,26 @@ const LedgerEntry = require('../models/LedgerEntry');
  */
 const getMyLedger = async (req, res, next) => {
   try {
-    const entries = await LedgerEntry.find({ user_id: req.user._id }).sort({ createdAt: -1 });
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 0;
+    const skip = limit > 0 ? (page - 1) * limit : 0;
+
+    const filter = { user_id: req.user._id };
+    const total = await LedgerEntry.countDocuments(filter);
+
+    let query = LedgerEntry.find(filter).sort({ createdAt: -1 });
+    if (limit > 0) {
+      query = query.skip(skip).limit(limit);
+    }
+
+    const entries = await query;
 
     res.status(200).json({
       success: true,
       count: entries.length,
+      total,
+      page: limit > 0 ? page : 1,
+      totalPages: limit > 0 ? Math.ceil(total / limit) : 1,
       current_balance: req.user.balance,
       data: entries
     });
@@ -27,11 +42,26 @@ const getMyLedger = async (req, res, next) => {
  */
 const getUserLedger = async (req, res, next) => {
   try {
-    const entries = await LedgerEntry.find({ user_id: req.params.userId }).sort({ createdAt: -1 });
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 0;
+    const skip = limit > 0 ? (page - 1) * limit : 0;
+
+    const filter = { user_id: req.params.userId };
+    const total = await LedgerEntry.countDocuments(filter);
+
+    let query = LedgerEntry.find(filter).sort({ createdAt: -1 });
+    if (limit > 0) {
+      query = query.skip(skip).limit(limit);
+    }
+
+    const entries = await query;
 
     res.status(200).json({
       success: true,
       count: entries.length,
+      total,
+      page: limit > 0 ? page : 1,
+      totalPages: limit > 0 ? Math.ceil(total / limit) : 1,
       data: entries
     });
   } catch (error) {

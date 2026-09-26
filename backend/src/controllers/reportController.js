@@ -121,7 +121,126 @@ const getWasteSummary = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc    Mengekspor rekap transaksi setoran sampah dalam format CSV
+ * @route   GET /api/reports/export/deposits
+ * @access  Private (Admin, Petugas)
+ */
+const exportDepositsCSV = async (req, res, next) => {
+  try {
+    const filter = {};
+    if (req.query.startDate && req.query.endDate) {
+      filter.createdAt = {
+        $gte: new Date(req.query.startDate),
+        $lte: new Date(req.query.endDate)
+      };
+    }
+
+    const deposits = await DepositTransaction.find(filter)
+      .populate('nasabah_id', 'name email phone')
+      .populate('petugas_id', 'name')
+      .sort({ createdAt: -1 });
+
+    const headers = [
+      'Kode Transaksi',
+      'Tanggal',
+      'Nama Nasabah',
+      'Kontak Nasabah',
+      'Petugas',
+      'Total Bobot (kg)',
+      'Total Nominal (Rp)',
+      'Rincian Sampah',
+      'Catatan'
+    ];
+
+    const rows = deposits.map((d) => {
+      const itemsDetail = d.items
+        .map((i) => `${i.waste_name} (${i.weight_kg} kg @ Rp ${i.price_per_kg})`)
+        .join('; ');
+      
+      const escape = (text) => `"${String(text || '').replace(/"/g, '""')}"`;
+
+      return [
+        escape(d.transaction_code),
+        escape(d.createdAt.toISOString().replace('T', ' ').substring(0, 19)),
+        escape(d.nasabah_id ? d.nasabah_id.name : '-'),
+        escape(d.nasabah_id ? d.nasabah_id.phone || d.nasabah_id.email : '-'),
+        escape(d.petugas_id ? d.petugas_id.name : '-'),
+        d.total_weight_kg,
+        d.total_amount,
+        escape(itemsDetail),
+        escape(d.notes || '-')
+      ].join(',');
+    });
+
+    const csvContent = [headers.join(','), ...rows].join('\r\n');
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="rekap_setoran_${Date.now()}.csv"`);
+    return res.status(200).send('\uFEFF' + csvContent); // BOM untuk kompatibilitas Excel
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Mengekspor rekap mutasi buku besar nasabah dalam format CSV
+ * @route   GET /api/reports/export/ledger
+ * @access  Private (Admin, Petugas)
+ */
+const exportLedgerCSV = async (req, res, next) => {
+  try {
+    const filter = {};
+    if (req.query.user_id) {
+      filter.user_id = req.query.user_id;
+    }
+    if (req.query.type) {
+      filter.type = req.query.type;
+    }
+
+    const LedgerEntry = require('../models/LedgerEntry');
+    const entries = await LedgerEntry.find(filter)
+      .populate('user_id', 'name email phone')
+      .sort({ createdAt: -1 });
+
+    const headers = [
+      'Tanggal',
+      'Nama Nasabah',
+      'Jenis Mutasi',
+      'Referensi',
+      'Nominal (Rp)',
+      'Saldo Sebelum (Rp)',
+      'Saldo Sesudah (Rp)',
+      'Keterangan'
+    ];
+
+    const rows = entries.map((e) => {
+      const escape = (text) => `"${String(text || '').replace(/"/g, '""')}"`;
+      return [
+        escape(e.createdAt.toISOString().replace('T', ' ').substring(0, 19)),
+        escape(e.user_id ? e.user_id.name : '-'),
+        e.type,
+        e.reference_type,
+        e.amount,
+        e.balance_before,
+        e.balance_after,
+        escape(e.description || '-')
+      ].join(',');
+    });
+
+    const csvContent = [headers.join(','), ...rows].join('\r\n');
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="rekap_buku_besar_${Date.now()}.csv"`);
+    return res.status(200).send('\uFEFF' + csvContent);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getDashboardStats,
-  getWasteSummary
+  getWasteSummary,
+  exportDepositsCSV,
+  exportLedgerCSV
 };

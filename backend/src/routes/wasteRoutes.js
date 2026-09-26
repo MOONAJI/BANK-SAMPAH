@@ -8,11 +8,12 @@ const {
   deleteWasteCategory
 } = require('../controllers/wasteController');
 const { protect, authorize } = require('../middleware/authMiddleware');
+const { validateWasteCategory } = require('../middleware/validateMiddleware');
 
 router
   .route('/')
   .get(getWasteCategories)
-  .post(protect, authorize('admin'), createWasteCategory);
+  .post(protect, authorize('admin'), validateWasteCategory, createWasteCategory);
 
 router
   .route('/:id')

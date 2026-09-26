@@ -135,14 +135,29 @@ const getDeposits = async (req, res, next) => {
       };
     }
 
-    const deposits = await DepositTransaction.find(filter)
+    // Dukungan Pagination & Filter
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 0; // 0 = ambil semua jika tidak dispesifikasikan
+    const skip = limit > 0 ? (page - 1) * limit : 0;
+
+    const total = await DepositTransaction.countDocuments(filter);
+    let query = DepositTransaction.find(filter)
       .populate('nasabah_id', 'name email phone address')
       .populate('petugas_id', 'name email')
       .sort({ createdAt: -1 });
 
+    if (limit > 0) {
+      query = query.skip(skip).limit(limit);
+    }
+
+    const deposits = await query;
+
     res.status(200).json({
       success: true,
       count: deposits.length,
+      total,
+      page: limit > 0 ? page : 1,
+      totalPages: limit > 0 ? Math.ceil(total / limit) : 1,
       data: deposits
     });
   } catch (error) {
@@ -157,13 +172,29 @@ const getDeposits = async (req, res, next) => {
  */
 const getMyDeposits = async (req, res, next) => {
   try {
-    const deposits = await DepositTransaction.find({ nasabah_id: req.user._id })
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 0;
+    const skip = limit > 0 ? (page - 1) * limit : 0;
+
+    const filter = { nasabah_id: req.user._id };
+    const total = await DepositTransaction.countDocuments(filter);
+
+    let query = DepositTransaction.find(filter)
       .populate('petugas_id', 'name')
       .sort({ createdAt: -1 });
+
+    if (limit > 0) {
+      query = query.skip(skip).limit(limit);
+    }
+
+    const deposits = await query;
 
     res.status(200).json({
       success: true,
       count: deposits.length,
+      total,
+      page: limit > 0 ? page : 1,
+      totalPages: limit > 0 ? Math.ceil(total / limit) : 1,
       data: deposits
     });
   } catch (error) {

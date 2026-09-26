@@ -98,11 +98,11 @@ BANK-SAMPAH/
   - [withdrawalRoutes.js]: Rute `/api/withdrawals` dan `/api/withdrawals/:id/status`.
   - [withdrawalController.js]: Mengatur validasi kecukupan saldo saat nasabah mengajukan penarikan, serta pemrosesan persetujuan (APPROVED) yang otomatis memotong saldo nasabah dan mencatat DEBIT pada buku tabungan.
 - **Modul Buku Tabungan (Ledger)**:
-  - [ledgerRoutes.js]: Rute `/api/ledger/my-history` dan `/api/ledger/user/:userId`.
+  - [ledgerRoutes.js]: Rute `/api/ledger/my-history` dan `/api/ledger/user/:userId` (dilengkapi dukungan pagination `?page=&limit=`).
   - [ledgerController.js]: Menampilkan riwayat arus kas saldo nasabah (kredit dari setoran sampah, debit dari penarikan dana).
 - **Modul Laporan & Dashboard**:
-  - [reportRoutes.js]: Rute `/api/reports/dashboard` dan `/api/reports/waste-summary`.
-  - [reportController.js]: Menjalankan *MongoDB Aggregation Pipeline* untuk menghitung metrik utama: total tonase sampah terkumpul (kg), total perputaran uang setoran (Rp), total dana yang telah ditarik, saldo aktif warga, dan peringkat sampah terbanyak.
+  - [reportRoutes.js]: Rute `/api/reports/dashboard`, `/api/reports/waste-summary`, `/api/reports/export/deposits`, dan `/api/reports/export/ledger`.
+  - [reportController.js]: Menjalankan *MongoDB Aggregation Pipeline* untuk menghitung metrik utama: total tonase sampah terkumpul (kg), total perputaran uang setoran (Rp), total dana yang telah ditarik, saldo aktif warga, peringkat sampah terbanyak, serta generator file ekspor format CSV/Excel.
 
 #### Seeder & Skrip Uji
 - [seed.js]: Mengisi database lokal dengan data awal siap pakai (1 Admin, 1 Petugas, 2 Nasabah, dan 7 jenis sampah dasar).
