@@ -121,4 +121,4 @@ List endpoints for deposits, withdrawals, and ledger support pagination with `?p
 
 ### Seed data
 
-`npm run seed` clears the database, then creates sample users for each role and 7 waste categories (plastic, paper, metal, glass). The login details for the sample accounts are printed in the terminal when the seeder finishes.
+`npm run seed` clears the database, then creates sample users for each role and 7 waste categories (plastic, paper, metal, glass). The login details for the sample accounts are printed in the terminal when the seeder finishes.~
