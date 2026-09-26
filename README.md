@@ -24,123 +24,101 @@ cd BANK-SAMPAH/backend
 docker run --rm -it $(docker build -q .)
 ```
 
-## 👥 Nama Kelompok dan Daftar Anggota
+Note: for the moment, the backend uses MongoDB that runs locally. Make sure a local MongoDB service is active before running the program above.
 
-**Mata Kuliah:** Pengembangan Aplikasi Web  
-**Departemen:** Departemen Teknik Elektro dan Teknologi Informasi (DTETI), Fakultas Teknik  
-**Institusi:** Universitas Gadjah Mada (UGM) — T.A. 2026/2027  
+## Backend
 
-| No | Nama Anggota | NIM |
-| :---: | :--- | :---: |
-| 1 | **Gilbert S. H. Nainggolan** | `24/543841/TK/60447` |
-| 2 | **Rakan Hendian Ramadhan** | `24/540158/TK/59909` |
-| 3 | **Rian Prasetya Munaji** | `24/545573/TK/60702` |
-| 4 | **Arin Evangelica Patabang** | `24/534030/TK/59182` |
+REST API for the waste bank (Bank Sampah) of RW 05. Residents deposit sorted waste, staff weigh it, and its value is credited to the resident's savings balance, which can later be withdrawn as cash, e-wallet, or bank transfer.
 
----
+### Tech stack
 
-## 📄 URL Laporan (Google Drive)
+- Node.js + Express 5
+- MongoDB via Mongoose
+- JWT authentication (`jsonwebtoken`) with bcrypt password hashing (`bcryptjs`)
+- `dotenv` for configuration, `nodemon` for development
 
-- **URL Laporan Milestone 1**: 
-
----
-
-## 📌 Deskripsi Aplikasi
-
-Sistem Pengelolaan Bank Sampah ini dirancang untuk mendigitalkan proses pencatatan setoran sampah serta pembukuan tabungan warga di tingkat RW yang sebelumnya masih manual.
-
-### Permasalahan:
-1. **Risiko Salah Hitung Manual**: Pencatatan jenis sampah, berat timbangan, dan nilai rupiah pada buku tabungan manual rentan terjadi kesalahan hitung (*human error*), khususnya saat antrean nasabah ramai.
-2. **Risiko Buku Tabungan Hilang atau Rusak**: Buku fisik mudah robek, basah, atau hilang. Jika hilang, riwayat dan saldo nasabah sulit ditelusuri.
-3. **Fluktuasi Harga Sampah**: Harga sampah per kilogram dapat berubah sewaktu-waktu sehingga membutuhkan sistem yang mengunci (*snapshot*) harga saat transaksi berlangsung.
-4. **Keterbatasan Akses Saldo**: Nasabah kesulitan memantau saldo akumulasi secara mandiri dan transparan.
-
-### Solusi Sistem:
-- **Kalkulasi & Akumulasi Otomatis**: Petugas memasukkan data timbangan, sistem otomatis mengalikan dengan harga terkini dan menambahkan saldo ke akun nasabah.
-- **Buku Besar / Mutasi Real-time (*Audit Trail*)**: Setiap penambahan (kredit) maupun pengurangan (debit) saldo tercatat rapi pada mutasi buku besar (*ledger*) beserta saldo sebelum dan sesudahnya.
-- **Hak Akses Terpisah (RBAC)**:
-  - `nasabah`: Mengecek katalog harga, memantau saldo, melihat riwayat mutasi tabungan, dan mengajukan permohonan penarikan dana.
-  - `petugas`: Menimbang sampah warga, mencatat transaksi setoran, dan memproses persetujuan penarikan dana.
-  - `admin`: Mengatur master data harga per kg sampah, manajemen akun pengguna, serta memantau dashboard laporan analitik.
-- **Pengajuan & Pencairan Saldo**: Nasabah dapat mengajukan penarikan (tunai/e-wallet) yang akan diverifikasi oleh petugas dengan proteksi saldo tidak boleh minus.
-- **Laporan & Ekspor Data**: Menyediakan agregasi statistik volume sampah serta fitur ekspor data riwayat setoran dan buku kas ke format CSV.
-
----
-
-## 🛠️ Teknologi yang Digunakan
-
-- **Runtime & Backend Framework**: Node.js & Express.js (v5.x)
-- **Database & ODM**: MongoDB & Mongoose (v9.x)
-- **Autentikasi & Keamanan**: JSON Web Token (JWT) & BcryptJS (hashing password)
-- **Kontainerisasi**: Docker & Docker Compose
-- **Version Control**: Git & GitHub
-- **API Testing**: Postman & Skrip Uji Otomatis (`test_http_endpoints.js`, `test_e2e.js`)
-
----
-
-## 📂 Struktur Folder dan File Proyek
+### Project structure
 
 ```
-BANK-SAMPAH/
-├── README.md                      # Dokumentasi utama repository
-├── .gitignore                     # Daftar file/folder yang diabaikan Git
-├── docs/                          # Dokumentasi pendukung proyek
-│   ├── readme.md                  # Dokumentasi teknis & arsitektur mendalam
-│   └── tugas.md                   # Spesifikasi & target penugasan kuliah
-└── backend/                       # RESTful API Backend
-    ├── .env.example               # Template konfigurasi variabel lingkungan
-    ├── .dockerignore              # Pengecualian berkas build Docker
-    ├── Dockerfile                 # Konfigurasi container backend
-    ├── compose.yaml               # Orkestrasi Docker Compose (Backend + MongoDB)
-    ├── package.json               # Dependensi npm dan skrip proyek
-    ├── package-lock.json          # Lockfile dependensi
-    ├── test_e2e.js                # Pengujian alur database hulu-ke-hilir
-    ├── test_http_endpoints.js     # Pengujian pemanggilan HTTP endpoint & RBAC
-    └── src/
-        ├── index.js               # Inisialisasi Express server & rute
-        ├── config/
-        │   └── db.js              # Pengaturan koneksi MongoDB
-        ├── utils/
-        │   └── codeGenerator.js   # Generator kode transaksi otomatis
-        ├── middleware/
-        │   ├── authMiddleware.js  # Verifikasi JWT dan hak akses (RBAC)
-        │   ├── errorMiddleware.js # Handler error terpusat (404 & validasi)
-        │   └── validateMiddleware.js # Validasi format payload request body
-        ├── models/                # Skema Mongoose
-        │   ├── User.js            # Model pengguna (Admin, Petugas, Nasabah)
-        │   ├── WasteCategory.js   # Model jenis dan harga sampah per kg
-        │   ├── DepositTransaction.js    # Model transaksi setoran timbangan
-        │   ├── WithdrawalTransaction.js # Model pengajuan penarikan saldo
-        │   └── LedgerEntry.js     # Model buku besar / riwayat mutasi
-        ├── routes/                # Rute API Express
-        │   ├── authRoutes.js      # /api/auth (register, login, me)
-        │   ├── userRoutes.js      # /api/users
-        │   ├── wasteRoutes.js     # /api/waste-categories
-        │   ├── depositRoutes.js   # /api/deposits
-        │   ├── withdrawalRoutes.js# /api/withdrawals
-        │   ├── ledgerRoutes.js    # /api/ledger
-        │   └── reportRoutes.js    # /api/reports
-        ├── controllers/           # Logika bisnis transaksi dan controller
-        │   ├── authController.js
-        │   ├── userController.js
-        │   ├── wasteController.js
-        │   ├── depositController.js
-        │   ├── withdrawalController.js
-        │   ├── ledgerController.js
-        │   └── reportController.js
-        └── seeders/
-            └── seed.js            # Seeder data awal pengguna dan jenis sampah
+backend/src/
+├── index.js         # App entry point: middleware, route mounting, server start
+├── config/db.js     # MongoDB connection
+├── models/          # User, WasteCategory, DepositTransaction, WithdrawalTransaction, LedgerEntry
+├── controllers/     # Business logic for each module
+├── routes/          # Express routers mounted under /api
+├── middleware/      # Auth (protect/authorize), request validation, error handling
+├── utils/           # Transaction code generator (DEP-YYYYMMDD-XXXX / WD-YYYYMMDD-XXXX)
+└── seeders/seed.js  # Resets the database and inserts sample users and waste categories
 ```
 
----
+### Roles
 
-## 🔑 Informasi Akun Seeder Bawaan (Uji Coba)
+| Role      | Description                                                                                     |
+| --------- | ----------------------------------------------------------------------------------------------- |
+| `admin`   | Manages users and the waste category price list, plus everything `petugas` can do                |
+| `petugas` | Staff who record deposits, approve/reject withdrawals, and view reports                          |
+| `nasabah` | Resident/customer who can see their own deposits, balance history, and request withdrawals      |
 
-Untuk pengujian cepat, database seeder (`npm run seed`) telah menyiapkan akun default:
+Public registration (`POST /api/auth/register`) always creates a `nasabah` account. Other roles are created by an admin.
 
-| Role | Email | Password |
-| :--- | :--- | :--- |
-| **Admin** | `admin@rw05.id` | `admin123` |
-| **Petugas** | `petugas@rw05.id` | `petugas123` |
-| **Nasabah** | `budi@rw05.id` | `nasabah123` |
-| **Nasabah 2** | `siti@rw05.id` | `nasabah123` |
+### Main flow
+
+1. **Deposit** – `petugas` records a deposit with one or more waste items and their weight. The price per kg is snapshotted from the waste category at that moment, the subtotal and total are calculated, and the resident's balance is credited automatically.
+2. **Withdrawal** – `nasabah` requests a withdrawal (minimum Rp 1,000) via `TUNAI`, `E_WALLET`, or `BANK_TRANSFER`. The request stays `PENDING` until `petugas`/`admin` sets it to `APPROVED` (balance is debited) or `REJECTED`.
+3. **Ledger** – every balance change writes a `LedgerEntry` (`CREDIT` for deposits, `DEBIT` for withdrawals) with the balance before and after, acting as the resident's savings book.
+4. **Reports** – dashboard statistics, per-waste-type summaries, and CSV exports of deposits and ledger entries.
+
+Deleting a waste category is a soft delete (`isActive = false`) by default so past transactions stay valid; add `?hard=true` to delete it permanently.
+
+### Environment variables
+
+Copy `backend/.env.example` to `backend/.env` and adjust as needed:
+
+| Variable         | Default                                   | Description                  |
+| ---------------- | ----------------------------------------- | ---------------------------- |
+| `PORT`           | `5000`                                    | Server port                  |
+| `NODE_ENV`       | `development`                             | Hides error stack traces when set to `production` |
+| `MONGO_URI`      | `mongodb://127.0.0.1:27017/bank_sampah`   | MongoDB connection string    |
+| `JWT_SECRET`     | –                                         | Secret for signing JWTs      |
+| `JWT_EXPIRES_IN` | `7d`                                      | Token lifetime               |
+
+### API endpoints
+
+All protected endpoints require the header `Authorization: Bearer <token>`. `GET /` returns a health check with the list of modules.
+
+| Method | Endpoint                          | Access                 | Description                                                |
+| ------ | --------------------------------- | ---------------------- | ---------------------------------------------------------- |
+| POST   | `/api/auth/register`              | Public                 | Register a new `nasabah`                                   |
+| POST   | `/api/auth/login`                 | Public                 | Log in and receive a JWT                                   |
+| GET    | `/api/auth/me`                    | Logged in              | Get own profile                                            |
+| PUT    | `/api/auth/me`                    | Logged in              | Update own profile (name, phone, address, e-wallet info)   |
+| GET    | `/api/users`                      | admin, petugas         | List users (`?role=`, `?search=`)                          |
+| POST   | `/api/users`                      | admin                  | Create a user with any role                                |
+| GET    | `/api/users/:id`                  | admin, petugas         | Get user details                                           |
+| PUT    | `/api/users/:id`                  | admin                  | Update a user                                              |
+| DELETE | `/api/users/:id`                  | admin                  | Delete a user (not yourself)                               |
+| GET    | `/api/waste-categories`           | Public                 | List active categories (`?all=true`, `?group=`)            |
+| GET    | `/api/waste-categories/:id`       | Public                 | Get category details                                       |
+| POST   | `/api/waste-categories`           | admin                  | Add a category                                             |
+| PUT    | `/api/waste-categories/:id`       | admin                  | Update a category / price                                  |
+| DELETE | `/api/waste-categories/:id`       | admin                  | Deactivate a category (`?hard=true` to delete)             |
+| POST   | `/api/deposits`                   | admin, petugas         | Record a deposit and credit the balance                    |
+| GET    | `/api/deposits`                   | admin, petugas         | List deposits (`?nasabah_id=`, `?startDate=&endDate=`)     |
+| GET    | `/api/deposits/my-deposits`       | nasabah                | Own deposit history                                        |
+| GET    | `/api/deposits/:id`               | Logged in (owner only for nasabah) | Deposit details                                |
+| POST   | `/api/withdrawals`                | nasabah                | Request a withdrawal                                       |
+| GET    | `/api/withdrawals`                | admin, petugas         | List withdrawals (`?status=`, `?nasabah_id=`)              |
+| GET    | `/api/withdrawals/my-withdrawals` | nasabah                | Own withdrawal history                                     |
+| PATCH  | `/api/withdrawals/:id/status`     | admin, petugas         | Approve or reject a withdrawal                             |
+| GET    | `/api/ledger/my-history`          | nasabah                | Own balance history and current balance                    |
+| GET    | `/api/ledger/user/:userId`        | admin, petugas         | A resident's balance history                               |
+| GET    | `/api/reports/dashboard`          | admin, petugas         | Totals for users, deposits, withdrawals, and balances      |
+| GET    | `/api/reports/waste-summary`      | admin, petugas         | Weight and value per waste type                            |
+| GET    | `/api/reports/export/deposits`    | admin, petugas         | Download deposits as CSV (`?startDate=&endDate=`)          |
+| GET    | `/api/reports/export/ledger`      | admin, petugas         | Download ledger as CSV (`?user_id=`, `?type=`)             |
+
+List endpoints for deposits, withdrawals, and ledger support pagination with `?page=` and `?limit=` (no limit returns all records) and respond with `count`, `total`, `page`, and `totalPages`.
+
+### Seed data
+
+`npm run seed` clears the database, then creates sample users for each role and 7 waste categories (plastic, paper, metal, glass). The login details for the sample accounts are printed in the terminal when the seeder finishes.
