@@ -24,10 +24,6 @@ cd BANK-SAMPAH/backend
 docker run --rm -it $(docker build -q .)
 ```
 
-Note: for the moment, the backend uses MongoDB that runs locally. Make sure a local MongoDB service is active before running the program above.
-
----
-
 ## 👥 Nama Kelompok dan Daftar Anggota
 
 **Mata Kuliah:** Pengembangan Aplikasi Web  
@@ -45,7 +41,7 @@ Note: for the moment, the backend uses MongoDB that runs locally. Make sure a lo
 
 ## 📄 URL Laporan (Google Drive)
 
-- **URL Laporan Milestone 1**: [Tautan Laporan di Google Drive](https://drive.google.com/drive/folders/YOUR_GDRIVE_LINK_HERE) *(Silakan isi dengan tautan Google Drive laporan kelompok)*
+- **URL Laporan Milestone 1**: 
 
 ---
 
