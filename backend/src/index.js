@@ -17,8 +17,12 @@ const withdrawalRoutes = require('./routes/withdrawalRoutes');
 const ledgerRoutes = require('./routes/ledgerRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 
-// Inisialisasi Database
-connectDB();
+// Inisialisasi Database saat dijalankan langsung (VPS/Local)
+if (require.main === module && !process.env.VERCEL) {
+  connectDB().catch((err) => {
+    console.error('[MongoDB Startup Error]:', err.message);
+  });
+}
 
 const app = express();
 
@@ -26,6 +30,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware untuk memastikan koneksi database aktif pada setiap request (Serverless & VPS)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Rute Informasi Server / Health Check
 app.get('/', (req, res) => {
@@ -60,8 +74,12 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`[Server Running]: http://localhost:${PORT}`);
-});
+// Jalankan listener server hanya jika dijalankan secara langsung (VPS / Local / Docker),
+// dan bukan saat di-import oleh lingkungan serverless (Vercel).
+if (require.main === module && !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`[Server Running]: http://localhost:${PORT}`);
+  });
+}
 
 module.exports = app;
