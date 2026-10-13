@@ -2,6 +2,8 @@
 
 Project for Web Development class. Work in progress.
 
+[Milestone 1 Report](https://drive.google.com/file/d/1TLz5WZ-wCFXOySfe3nDN5IuIpPzO4_eB/view?usp=drive_link)
+
 Install dependencies and initiate seed:
 
 ```bash
