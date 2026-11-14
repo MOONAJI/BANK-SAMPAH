@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Fragment } from "react";
 import { MapPin } from "lucide-react";
-import { ButtonLink } from "@/components/ui/button";
+import { buttonClass, ButtonLink } from "@/components/ui/button";
+import { POS_LOCATION, POS_MAP_EMBED_URL } from "@/lib/constants";
 import { getPublicWasteCategories } from "@/lib/api/waste";
 import { PriceCards, PriceUnavailable } from "@/features/waste/price-cards";
 
@@ -78,18 +80,48 @@ export default function LandingPage() {
       </section>
 
       {/* Lokasi pos */}
-      <section className="mx-auto grid max-w-6xl grid-cols-1 gap-5 px-4 pb-16 sm:px-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-        <div className="grid min-h-64 place-items-center rounded-(--radius-card) border-2 border-dashed border-neutral-300 bg-neutral-100 text-center text-neutral-500">
-          <span className="flex items-center gap-2 px-4">
-            <MapPin className="size-5" aria-hidden />
-            Peta lokasi pos menyusul
-          </span>
-        </div>
-        <div className="rounded-(--radius-card) border border-line p-5">
-          <h3 className="font-semibold">Pos penimbangan</h3>
-          <p className="mt-2 text-neutral-600">[ALAMAT POS]</p>
-          <h3 className="mt-5 font-semibold">Jadwal</h3>
-          <p className="mt-2 text-neutral-600">[HARI &amp; JAM PENIMBANGAN]</p>
+      <section aria-labelledby="lokasi" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+        <h2 id="lokasi" className="mb-5 text-2xl font-bold">
+          Lokasi pos
+        </h2>
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+          {/* Google Maps tanpa API key; dimuat saat digulir mendekat (lazy) supaya beranda tetap cepat. */}
+          <iframe
+            src={POS_MAP_EMBED_URL}
+            title={`Peta lokasi ${POS_LOCATION.name}`}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="h-72 w-full rounded-(--radius-card) border border-line bg-neutral-100 sm:h-80 lg:h-full lg:min-h-80"
+          />
+          <div className="flex flex-col rounded-(--radius-card) border border-line p-5">
+            <h3 className="font-semibold">Pos penimbangan</h3>
+            <p className="mt-1 font-medium">{POS_LOCATION.name}</p>
+            <p className="mt-1 flex gap-2 leading-relaxed text-neutral-600">
+              <MapPin className="mt-1 size-4 shrink-0" aria-hidden />
+              <span>{POS_LOCATION.address}</span>
+            </p>
+
+            <h3 className="mt-5 font-semibold">Jadwal penimbangan</h3>
+            <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-neutral-600">
+              {POS_LOCATION.schedule.map((s) => (
+                <Fragment key={s.days}>
+                  <dt>{s.days}</dt>
+                  <dd className="text-right font-medium text-ink tabular-nums">{s.hours}</dd>
+                </Fragment>
+              ))}
+            </dl>
+
+            <a
+              href={POS_LOCATION.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonClass({ variant: "outline", className: "mt-6 w-full lg:mt-auto" })}
+            >
+              <MapPin className="size-4" aria-hidden />
+              Buka di Google Maps
+              <span className="sr-only">(tab baru)</span>
+            </a>
+          </div>
         </div>
       </section>
     </div>
