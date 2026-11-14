@@ -1,26 +1,43 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  Token desain Bank Sampah RW 05 (mengikuti folder design/).
+  Warna utama memakai palet bawaan Tailwind v4: emerald-500 (#00bc7d) untuk tombol,
+  emerald-600 (#009966) untuk penanda aktif, red-500 untuk aksi tolak, orange-500 untuk grafik.
+  Token di bawah melengkapi warna yang tidak ada di palet bawaan.
+*/
+@theme {
+  --color-brand: #1b5e3b; /* label hijau tua: "PLASTIK", "Lihat semua", angka saldo sesudah */
+  --color-brand-soft: #e3f3ea; /* badge "Aktif", ikon + di buku tabungan */
+  --color-avatar: #d6ecde;
+
+  --color-canvas: #fafafa; /* latar halaman */
+  --color-surface: #ffffff; /* kartu, sidebar, header */
+  --color-line: #e4e4e4; /* border kartu & tabel */
+  --color-ink: #1d1c19; /* teks utama */
+  --color-muted: #6b6860; /* teks pendukung */
+
+  --color-success: #1f7a4d; /* uang masuk */
+  --color-warning: #7a4d00; /* teks status menunggu */
+  --color-warning-soft: #fdf1d8;
+  --color-danger: #b42318; /* uang keluar, error */
+  --color-danger-soft: #fdecea;
+
+  --radius-card: 0.875rem;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
 }
