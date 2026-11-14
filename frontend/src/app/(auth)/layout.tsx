@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Inter } from "next/font/google";
 import { Logo } from "@/components/layout/logo";
 
@@ -17,9 +16,8 @@ export default function AuthLayout({
         backgroundImage: "linear-gradient(180deg, #ecfdf5 0%, #ffffff 100%)",
       }}
     >
-      <Link href="/" aria-label="Kembali ke beranda">
-        <Logo />
-      </Link>
+      {/* Logo sudah berupa link ke beranda */}
+      <Logo />
       {children}
     </main>
   );

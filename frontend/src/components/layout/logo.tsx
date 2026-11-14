@@ -1,28 +1,24 @@
-export function Logo() {
+import Image from "next/image";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+/** Logo tempat sampah + "Bank Sampah / RW 05". */
+export function Logo({ href = "/", size = "md", className }: { href?: string; size?: "sm" | "md"; className?: string }) {
+  const small = size === "sm";
   return (
-    <div className="flex h-11 items-center">
-      <svg
-        width="44"
-        height="36"
-        viewBox="516 62 88 80"
-        aria-hidden="true"
-        className="shrink-0"
-      >
-        <rect x="548" y="62" width="24" height="8" rx="3" fill="#166534" />
-        <rect x="516" y="70" width="88" height="10" rx="4" fill="#166534" />
-        <path
-          d="M522 84 H598 L592 138 Q591 142 587 142 H533 Q529 142 528 138 Z"
-          fill="#16A34A"
-        />
-        <path
-          d="M560 130 C540 126 538 104 546 94 C562 98 568 114 560 130 Z"
-          fill="#FFFFFF"
-        />
-      </svg>
-      <div className="ml-[11px]">
-        <p className="text-[22px] leading-[26px] text-[#111827]">Bank Sampah</p>
-        <p className="text-[13px] leading-4 text-[#6b7280]">RW 05</p>
-      </div>
-    </div>
+    <Link href={href} className={cn("flex items-center gap-2.5 text-ink", className)} aria-label="Bank Sampah RW 05">
+      <Image
+        src="/images/logo.webp"
+        alt=""
+        width={44}
+        height={36}
+        priority
+        className={small ? "h-7 w-auto" : "h-9 w-auto"}
+      />
+      <span className="flex flex-col leading-none">
+        <span className={cn("whitespace-nowrap", small ? "text-lg" : "text-xl")}>Bank Sampah</span>
+        <span className="mt-1 text-[0.7rem] text-muted">RW 05</span>
+      </span>
+    </Link>
   );
 }
