@@ -9,7 +9,7 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 export const metadata: Metadata = {
   title: { default: APP_NAME, template: `%s · ${APP_NAME}` },
   description: "Tabung sampah terpilah, saldo tercatat otomatis, tarik kapan saja.",
-  icons: { icon: "/images/logo.webp" },
+  // Ikon tab diatur lewat file konvensi Next.js: app/favicon.ico, app/icon.svg, app/apple-icon.png.
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
