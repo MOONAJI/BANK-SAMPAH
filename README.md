@@ -1,126 +1,196 @@
-# BANK-SAMPAH
+# Bank Sampah RW 05
 
-Project for Web Development class. Work in progress.
+Aplikasi web untuk mendigitalisasi pencatatan setoran sampah dan saldo nasabah. Petugas mencatat jenis serta berat sampah, sistem menghitung nilai setoran dan memperbarui saldo, lalu nasabah dapat melihat riwayat dan mengajukan penarikan.
 
-[Milestone 1 Report](https://drive.google.com/file/d/1TLz5WZ-wCFXOySfe3nDN5IuIpPzO4_eB/view?usp=drive_link)
+## Aplikasi
 
-Install dependencies and initiate seed:
+- **Aplikasi berjalan:** [bank-sampah-bay.vercel.app](https://bank-sampah-bay.vercel.app/)
+- **Repository:** [MOONAJI/BANK-SAMPAH](https://github.com/MOONAJI/BANK-SAMPAH)
+- **Laporan Milestone 1:** [Buka laporan](https://drive.google.com/file/d/1TLz5Z-wCFXOySfe3nDN5IuIpPzO4_eB/view?usp=drive_link)
+
+> Harga sampah di aplikasi dapat berubah. Informasi lokasi dan jadwal pos pada halaman publik merupakan data contoh untuk keperluan proyek.
+
+## Latar belakang
+
+Bank sampah tingkat RW sebelumnya mencatat jenis sampah, berat, nilai setoran, dan saldo pada buku tabungan manual. Pencatatan ini rawan salah hitung saat petugas melayani banyak nasabah. Buku juga dapat hilang atau rusak sehingga riwayat saldo sulit ditelusuri.
+
+Aplikasi ini menyediakan pencatatan transaksi digital, perhitungan saldo otomatis, buku tabungan digital, serta alur pengajuan dan verifikasi penarikan. Ringkasan kebutuhan proyek tersedia di [`docs/tugas.md`](docs/tugas.md), sedangkan rancangan halaman dan alur pengguna ada di [`docs/frontend-uiux.md`](docs/frontend-uiux.md).
+
+## Peran pengguna
+
+| Peran | Kemampuan utama |
+| --- | --- |
+| **Nasabah** | Melihat saldo, buku tabungan, riwayat setoran dan penarikan; mengubah profil; mengajukan penarikan. |
+| **Petugas** | Mencatat setoran, melihat data nasabah dan riwayatnya, memverifikasi penarikan, melihat laporan, dan mengunduh CSV. |
+| **Admin** | Semua kemampuan petugas, ditambah mengelola jenis dan harga sampah serta akun pengguna. |
+
+Pendaftaran publik membuat akun nasabah. Akun admin dan petugas dibuat oleh admin. Akses halaman dan API dibatasi berdasarkan peran.
+
+## Fitur
+
+- Halaman publik dengan cara kerja, daftar harga sampah, lokasi dan jadwal pos.
+- Registrasi nasabah, login, logout, dan pengelolaan profil.
+- Pencatatan setoran yang dapat memuat beberapa jenis sampah sekaligus.
+- Perhitungan subtotal berdasarkan berat dan harga per kilogram; harga transaksi disimpan agar perubahan harga berikutnya tidak mengubah transaksi lama.
+- Pembaruan saldo otomatis dan pencatatan mutasi di buku tabungan digital.
+- Riwayat dan detail transaksi setoran.
+- Pengajuan penarikan dengan metode tunai, e-wallet, atau transfer bank. Batas minimum pengajuan Rp1.000.
+- Verifikasi penarikan oleh petugas atau admin. Saldo didebit saat disetujui; penolakan tidak mengurangi saldo.
+- Dashboard, ringkasan sampah per kategori, filter transaksi, dan ekspor CSV.
+- Pengelolaan kategori/harga sampah dan akun pengguna oleh admin.
+- Antarmuka responsif untuk ponsel, tablet, dan desktop.
+
+## Alur utama
+
+1. **Setoran:** petugas memilih nasabah, memasukkan jenis dan berat sampah, lalu menyimpan transaksi. Backend menghitung nilai setoran, menambah saldo, dan membuat mutasi kredit.
+2. **Penarikan:** nasabah mengajukan nominal dan metode pencairan. Status awalnya `PENDING`. Petugas atau admin menyetujui atau menolak pengajuan. Persetujuan membuat mutasi debit; penolakan menyimpan alasan tanpa mengubah saldo.
+3. **Buku tabungan:** setiap perubahan saldo dicatat sebagai mutasi kredit atau debit beserta saldo sebelum dan sesudah transaksi.
+4. **Harga sampah:** admin dapat menambah, mengubah, atau menonaktifkan kategori. Perubahan harga berlaku untuk setoran berikutnya; transaksi lama mempertahankan harga saat setoran dicatat.
+
+## Teknologi dan arsitektur
+
+```text
+Browser
+  └── Next.js / React (antarmuka web)
+        └── Express REST API
+              └── MongoDB melalui Mongoose
+```
+
+| Bagian | Teknologi |
+| --- | --- |
+| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4 |
+| Backend | Node.js, Express 5 |
+| Database | MongoDB, Mongoose |
+| Autentikasi | JSON Web Token (JWT), bcryptjs |
+| Deployment | Vercel |
+
+Backend menggunakan kontrol akses berbasis peran (RBAC). Password di-hash sebelum disimpan. Konfigurasi lokal menggunakan MongoDB lokal secara default; deployment dapat menggunakan MongoDB Atlas melalui `MONGO_URI`.
+
+## Menjalankan secara lokal
+
+### Prasyarat
+
+- Node.js dan npm
+- MongoDB lokal atau MongoDB Atlas
+
+### 1. Siapkan backend
 
 ```bash
 git clone https://github.com/MOONAJI/BANK-SAMPAH.git
 cd BANK-SAMPAH/backend
 npm install
-npm run seed
 ```
 
-Run program:
+Salin `backend/.env.example` menjadi `backend/.env`, lalu sesuaikan nilainya. Contoh konfigurasi lokal:
+
+```env
+PORT=5000
+NODE_ENV=development
+MONGO_URI=mongodb://127.0.0.1:27017/bank_sampah
+JWT_SECRET=ganti_dengan_secret_lokal_yang_kuat
+JWT_EXPIRES_IN=7d
+FRONTEND_URL=http://localhost:3000
+```
+
+Jalankan backend:
 
 ```bash
 npm run dev
 ```
 
-Or run via Docker:
+API berjalan di `http://localhost:5000`. Buka alamat tersebut untuk melihat health check dan daftar modul API.
+
+### 2. Siapkan frontend
+
+Buka terminal kedua dari folder repository:
 
 ```bash
-cd BANK-SAMPAH/backend
-docker run --rm -it $(docker build -q .)
+cd frontend
+npm install
 ```
 
-Note: for the moment, the backend uses MongoDB that runs locally. Make sure a local MongoDB service is active before running the program above.
+Buat `frontend/.env.local`:
 
-## Backend
-
-REST API for the waste bank (Bank Sampah) of RW 05. Residents deposit sorted waste, staff weigh it, and its value is credited to the resident's savings balance, which can later be withdrawn as cash, e-wallet, or bank transfer.
-
-### Tech stack
-
-- Node.js + Express 5
-- MongoDB via Mongoose
-- JWT authentication (`jsonwebtoken`) with bcrypt password hashing (`bcryptjs`)
-- `dotenv` for configuration, `nodemon` for development
-
-### Project structure
-
-```
-backend/src/
-├── index.js         # App entry point: middleware, route mounting, server start
-├── config/db.js     # MongoDB connection
-├── models/          # User, WasteCategory, DepositTransaction, WithdrawalTransaction, LedgerEntry
-├── controllers/     # Business logic for each module
-├── routes/          # Express routers mounted under /api
-├── middleware/      # Auth (protect/authorize), request validation, error handling
-├── utils/           # Transaction code generator (DEP-YYYYMMDD-XXXX / WD-YYYYMMDD-XXXX)
-└── seeders/seed.js  # Resets the database and inserts sample users and waste categories
+```env
+API_URL=http://localhost:5000/api
 ```
 
-### Roles
+Jalankan frontend:
 
-| Role      | Description                                                                                     |
-| --------- | ----------------------------------------------------------------------------------------------- |
-| `admin`   | Manages users and the waste category price list, plus everything `petugas` can do                |
-| `petugas` | Staff who record deposits, approve/reject withdrawals, and view reports                          |
-| `nasabah` | Resident/customer who can see their own deposits, balance history, and request withdrawals      |
+```bash
+npm run dev
+```
 
-Public registration (`POST /api/auth/register`) always creates a `nasabah` account. Other roles are created by an admin.
+Buka [http://localhost:3000](http://localhost:3000).
 
-### Main flow
+### Data contoh
 
-1. **Deposit** – `petugas` records a deposit with one or more waste items and their weight. The price per kg is snapshotted from the waste category at that moment, the subtotal and total are calculated, and the resident's balance is credited automatically.
-2. **Withdrawal** – `nasabah` requests a withdrawal (minimum Rp 1,000) via `TUNAI`, `E_WALLET`, or `BANK_TRANSFER`. The request stays `PENDING` until `petugas`/`admin` sets it to `APPROVED` (balance is debited) or `REJECTED`.
-3. **Ledger** – every balance change writes a `LedgerEntry` (`CREDIT` for deposits, `DEBIT` for withdrawals) with the balance before and after, acting as the resident's savings book.
-4. **Reports** – dashboard statistics, per-waste-type summaries, and CSV exports of deposits and ledger entries.
+Untuk membuat data awal lokal, jalankan dari folder `backend`:
 
-Deleting a waste category is a soft delete (`isActive = false`) by default so past transactions stay valid; add `?hard=true` to delete it permanently.
+```bash
+npm run seed
+```
 
-### Environment variables
+**Perhatian:** seeder menghapus seluruh pengguna, kategori sampah, setoran, penarikan, dan mutasi yang ada pada database dalam `MONGO_URI`, lalu membuat data contoh. Gunakan hanya pada database lokal atau database uji yang boleh dikosongkan. Jangan jalankan pada database produksi.
 
-Copy `backend/.env.example` to `backend/.env` and adjust as needed:
+## Konfigurasi deployment
 
-| Variable         | Default                                   | Description                  |
-| ---------------- | ----------------------------------------- | ---------------------------- |
-| `PORT`           | `5000`                                    | Server port                  |
-| `NODE_ENV`       | `development`                             | Hides error stack traces when set to `production` |
-| `MONGO_URI`      | `mongodb://127.0.0.1:27017/bank_sampah`   | MongoDB connection string    |
-| `JWT_SECRET`     | –                                         | Secret for signing JWTs      |
-| `JWT_EXPIRES_IN` | `7d`                                      | Token lifetime               |
+- Frontend publik tersedia di [https://bank-sampah-bay.vercel.app/](https://bank-sampah-bay.vercel.app/).
+- Backend menyediakan konfigurasi Vercel di `backend/vercel.json` dan entry point serverless di `backend/api/index.js`.
+- Atur `API_URL` pada environment frontend agar menunjuk ke URL API yang digunakan.
+- Atur `MONGO_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, dan `FRONTEND_URL` pada environment backend. Simpan nilai rahasia di pengaturan environment deployment, jangan commit ke repository.
+- Ganti nilai contoh `JWT_SECRET` dengan secret yang kuat untuk deployment.
 
-### API endpoints
+## Ringkasan API
 
-All protected endpoints require the header `Authorization: Bearer <token>`. `GET /` returns a health check with the list of modules.
+Semua endpoint API menggunakan awalan `/api`. Endpoint terlindungi membutuhkan header `Authorization: Bearer <token>`.
 
-| Method | Endpoint                          | Access                 | Description                                                |
-| ------ | --------------------------------- | ---------------------- | ---------------------------------------------------------- |
-| POST   | `/api/auth/register`              | Public                 | Register a new `nasabah`                                   |
-| POST   | `/api/auth/login`                 | Public                 | Log in and receive a JWT                                   |
-| GET    | `/api/auth/me`                    | Logged in              | Get own profile                                            |
-| PUT    | `/api/auth/me`                    | Logged in              | Update own profile (name, phone, address, e-wallet info)   |
-| GET    | `/api/users`                      | admin, petugas         | List users (`?role=`, `?search=`)                          |
-| POST   | `/api/users`                      | admin                  | Create a user with any role                                |
-| GET    | `/api/users/:id`                  | admin, petugas         | Get user details                                           |
-| PUT    | `/api/users/:id`                  | admin                  | Update a user                                              |
-| DELETE | `/api/users/:id`                  | admin                  | Delete a user (not yourself)                               |
-| GET    | `/api/waste-categories`           | Public                 | List active categories (`?all=true`, `?group=`)            |
-| GET    | `/api/waste-categories/:id`       | Public                 | Get category details                                       |
-| POST   | `/api/waste-categories`           | admin                  | Add a category                                             |
-| PUT    | `/api/waste-categories/:id`       | admin                  | Update a category / price                                  |
-| DELETE | `/api/waste-categories/:id`       | admin                  | Deactivate a category (`?hard=true` to delete)             |
-| POST   | `/api/deposits`                   | admin, petugas         | Record a deposit and credit the balance                    |
-| GET    | `/api/deposits`                   | admin, petugas         | List deposits (`?nasabah_id=`, `?startDate=&endDate=`)     |
-| GET    | `/api/deposits/my-deposits`       | nasabah                | Own deposit history                                        |
-| GET    | `/api/deposits/:id`               | Logged in (owner only for nasabah) | Deposit details                                |
-| POST   | `/api/withdrawals`                | nasabah                | Request a withdrawal                                       |
-| GET    | `/api/withdrawals`                | admin, petugas         | List withdrawals (`?status=`, `?nasabah_id=`)              |
-| GET    | `/api/withdrawals/my-withdrawals` | nasabah                | Own withdrawal history                                     |
-| PATCH  | `/api/withdrawals/:id/status`     | admin, petugas         | Approve or reject a withdrawal                             |
-| GET    | `/api/ledger/my-history`          | nasabah                | Own balance history and current balance                    |
-| GET    | `/api/ledger/user/:userId`        | admin, petugas         | A resident's balance history                               |
-| GET    | `/api/reports/dashboard`          | admin, petugas         | Totals for users, deposits, withdrawals, and balances      |
-| GET    | `/api/reports/waste-summary`      | admin, petugas         | Weight and value per waste type                            |
-| GET    | `/api/reports/export/deposits`    | admin, petugas         | Download deposits as CSV (`?startDate=&endDate=`)          |
-| GET    | `/api/reports/export/ledger`      | admin, petugas         | Download ledger as CSV (`?user_id=`, `?type=`)             |
+| Modul | Endpoint utama | Akses |
+| --- | --- | --- |
+| Autentikasi & profil | `POST /api/auth/register`, `POST /api/auth/login`, `GET/PUT /api/auth/me` | Publik / pengguna login |
+| Pengguna | `GET/POST /api/users`, `GET/PUT/DELETE /api/users/:id` | Admin dan petugas untuk baca; admin untuk perubahan |
+| Jenis sampah | `GET /api/waste-categories`, `GET/POST/PUT/DELETE /api/waste-categories/:id` | Baca publik; perubahan oleh admin |
+| Setoran | `POST/GET /api/deposits`, `GET /api/deposits/my-deposits`, `GET /api/deposits/:id` | Petugas/admin; nasabah untuk data sendiri |
+| Penarikan | `POST /api/withdrawals`, `GET /api/withdrawals`, `GET /api/withdrawals/my-withdrawals`, `PATCH /api/withdrawals/:id/status` | Nasabah mengajukan; petugas/admin memverifikasi |
+| Buku tabungan | `GET /api/ledger/my-history`, `GET /api/ledger/user/:userId` | Nasabah untuk data sendiri; petugas/admin untuk nasabah |
+| Laporan | `GET /api/reports/dashboard`, `GET /api/reports/waste-summary`, `GET /api/reports/export/deposits`, `GET /api/reports/export/ledger` | Petugas dan admin |
 
-List endpoints for deposits, withdrawals, and ledger support pagination with `?page=` and `?limit=` (no limit returns all records) and respond with `count`, `total`, `page`, and `totalPages`.
+Endpoint daftar transaksi mendukung pagination dengan `page` dan `limit`. Filter yang tersedia bergantung pada modul, misalnya tanggal, status, nasabah, jenis mutasi, dan pengguna.
 
-### Seed data
+## Struktur repository
 
-`npm run seed` clears the database, then creates sample users for each role and 7 waste categories (plastic, paper, metal, glass). The login details for the sample accounts are printed in the terminal when the seeder finishes.~
+```text
+backend/
+├── api/                 # Entry point serverless Vercel
+├── src/
+│   ├── config/          # Koneksi database
+│   ├── controllers/     # Logika bisnis API
+│   ├── middleware/      # Autentikasi, otorisasi, validasi, error
+│   ├── models/          # Skema MongoDB
+│   ├── routes/          # Rute REST API
+│   ├── seeders/         # Data awal lokal
+│   └── utils/           # Utilitas transaksi
+└── vercel.json
+frontend/
+└── src/
+    ├── app/             # Halaman publik, autentikasi, nasabah, pengelola
+    ├── features/        # Komponen dan alur fitur
+    └── lib/             # Klien API, sesi, konstanta, navigasi
+docs/                    # User story, rancangan UI/UX, skenario pengujian
+```
+
+## Dokumentasi terkait
+
+- [User story dan kebutuhan proyek](docs/tugas.md)
+- [Rancangan UI/UX dan alur frontend](docs/frontend-uiux.md)
+- [Skenario pengujian manual](docs/skenario-pengujian.md)
+- [Dokumentasi backend](docs/readme.md)
+
+## Kontributor
+
+| Anggota | Kontribusi utama |
+| --- | --- |
+| Rakan Hendian Ramadhan | Fondasi backend/API, autentikasi, alur transaksi, dan konfigurasi deployment backend. |
+| Arin Evangelica Patabang | Pengembangan backend lanjutan, termasuk validasi, pagination, dan ekspor CSV. |
+| Rian Prasetya Munaji | Frontend Next.js, integrasi API, tampilan responsif, dan deployment frontend. |
+| Gilbert S. H. Nainggolan | Perancangan desain UI seluruh halaman aplikasi, termasuk layout dan elemen visual. |

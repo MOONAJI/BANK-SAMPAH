@@ -16,11 +16,11 @@ Proyek ini merupakan **REST API Backend** untuk sistem pengelolaan bank sampah b
 ```
 BANK-SAMPAH/
 ├── README.md                          # Dokumentasi utama proyek & informasi tim
-├── frontend/                          # Folder disiapkan untuk antarmuka klien/UI (masih kosong)
+├── frontend/                          # Aplikasi Next.js: halaman publik, nasabah, petugas, dan admin
 └── backend/
     ├── .env.example                   # Contoh konfigurasi variabel lingkungan
     ├── Dockerfile                     # Konfigurasi container backend
-    ├── compose.yaml                   # Konfigurasi Docker Compose (Backend & MongoDB)
+    ├── compose.yaml                   # Konfigurasi Docker Compose backend (database dikonfigurasi terpisah)
     ├── package.json                   # Konfigurasi dependensi dan skrip proyek
     ├── test_e2e.js                    # Pengujian logika transaksi langsung ke database
     ├── test_http_endpoints.js         # Pengujian endpoint REST API via HTTP client
