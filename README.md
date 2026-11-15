@@ -188,9 +188,9 @@ docs/                    # User story, rancangan UI/UX, skenario pengujian
 
 ## Kontributor
 
-| Anggota | Kontribusi utama |
-| --- | --- |
-| Rakan Hendian Ramadhan | Fondasi backend/API, autentikasi, alur transaksi, dan konfigurasi deployment backend. |
-| Arin Evangelica Patabang | Pengembangan backend lanjutan, termasuk validasi, pagination, dan ekspor CSV. |
-| Rian Prasetya Munaji | Frontend Next.js, integrasi API, tampilan responsif, dan deployment frontend. |
-| Gilbert S. H. Nainggolan | Perancangan desain UI seluruh halaman aplikasi, termasuk layout dan elemen visual. |
+| Anggota | NIM | Kontribusi utama |
+| --- | --- | --- |
+| Rakan Hendian Ramadhan | 24/540158/TK/59909 | Fondasi backend/API, autentikasi, alur transaksi, dan konfigurasi deployment backend. |
+| Arin Evangelica Patabang | 24/534030/TK/59182 | Pengembangan backend lanjutan, termasuk validasi, pagination, dan ekspor CSV. |
+| Rian Prasetya Munaji | 24/545573/TK/60702 | Frontend Next.js, integrasi API, tampilan responsif, dan deployment frontend. |
+| Gilbert S. H. Nainggolan | 24/543841/TK/60447 | Perancangan desain UI seluruh halaman aplikasi, termasuk layout dan elemen visual. |
