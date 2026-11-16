@@ -1,0 +1,848 @@
+{
+	"info": {
+		"_postman_id": "b3e5f2a1-8976-4d2c-a51f-bank-sampah-rw05",
+		"name": "Bank Sampah RW 05 API Collection",
+		"description": "Koleksi API lengkap dan alur pengujian otomatis untuk Backend Bank Sampah RW 05.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "adminToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "petugasToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "nasabahToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "nasabahId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "wasteCategoryId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "depositId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "withdrawalId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "0. Health Check",
+			"item": [
+				{
+					"name": "Check Server Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": ["{{baseUrl}}"],
+							"path": [""]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "1. Authentication (Auth)",
+			"item": [
+				{
+					"name": "1.1 Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.token) {",
+									"    pm.collectionVariables.set('adminToken', jsonData.token);",
+									"    console.log('Admin Token saved');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@rw05.id\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.2 Login Petugas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.token) {",
+									"    pm.collectionVariables.set('petugasToken', jsonData.token);",
+									"    console.log('Petugas Token saved');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"petugas@rw05.id\",\n  \"password\": \"petugas123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.3 Register Nasabah Baru",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.token) {",
+									"    pm.collectionVariables.set('nasabahToken', jsonData.token);",
+									"    pm.collectionVariables.set('nasabahId', jsonData.user.id || jsonData.user._id);",
+									"    console.log('Nasabah Token & ID saved');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Ahmad Testing\",\n  \"email\": \"ahmad.test@rw05.id\",\n  \"password\": \"nasabah123\",\n  \"phone\": \"081299990000\",\n  \"address\": \"RT 02 / RW 05 No. 44\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "register"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.4 Login Nasabah",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.token) {",
+									"    pm.collectionVariables.set('nasabahToken', jsonData.token);",
+									"    pm.collectionVariables.set('nasabahId', jsonData.user.id || jsonData.user._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"budi@rw05.id\",\n  \"password\": \"nasabah123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.5 Get Profile Saya (GET /me)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{nasabahToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "me"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.6 Update Profile Saya (PUT /me)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{nasabahToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Budi Santoso Updated\",\n  \"phone\": \"081255557777\",\n  \"ewallet_info\": {\n    \"provider\": \"GOPAY\",\n    \"account_number\": \"081255557777\",\n    \"account_name\": \"Budi Santoso\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "me"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Waste Categories (Kategori Sampah)",
+			"item": [
+				{
+					"name": "2.1 Get Semua Kategori Sampah (Public)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data && jsonData.data.length > 0) {",
+									"    pm.collectionVariables.set('wasteCategoryId', jsonData.data[0]._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/waste-categories?all=true",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "waste-categories"],
+							"query": [
+								{
+									"key": "all",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.2 Get Detail Kategori Sampah (Public)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/waste-categories/{{wasteCategoryId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "waste-categories", "{{wasteCategoryId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.3 Tambah Kategori Sampah Baru (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data) {",
+									"    pm.collectionVariables.set('wasteCategoryId', jsonData.data._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Minyak Jelantah\",\n  \"category_group\": \"Lainnya\",\n  \"price_per_kg\": 6000,\n  \"unit\": \"kg\",\n  \"description\": \"Minyak goreng bekas pakai dalam botol/jeriken\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/waste-categories",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "waste-categories"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.4 Update Kategori Sampah (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"price_per_kg\": 6500,\n  \"description\": \"Minyak goreng bekas pakai bersih terfilter\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/waste-categories/{{wasteCategoryId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "waste-categories", "{{wasteCategoryId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.5 Nonaktifkan / Hapus Kategori Sampah (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/waste-categories/{{wasteCategoryId}}?hard=false",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "waste-categories", "{{wasteCategoryId}}"],
+							"query": [
+								{
+									"key": "hard",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. User Management (Pengguna)",
+			"item": [
+				{
+					"name": "3.1 Get Daftar User (Admin & Petugas)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users?role=nasabah",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users"],
+							"query": [
+								{
+									"key": "role",
+									"value": "nasabah"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.2 Tambah User Baru (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Petugas Baru RW\",\n  \"email\": \"petugas2@rw05.id\",\n  \"password\": \"petugas123\",\n  \"role\": \"petugas\",\n  \"phone\": \"081288889999\",\n  \"address\": \"Pos RW 05\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.3 Get Detail User (Admin & Petugas)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/{{nasabahId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "{{nasabahId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.4 Update User (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"address\": \"RT 01 / RW 05 No. 12 Updated\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/{{nasabahId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "users", "{{nasabahId}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Deposits (Setoran Sampah)",
+			"item": [
+				{
+					"name": "4.1 Catat Transaksi Setoran (Petugas / Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data) {",
+									"    pm.collectionVariables.set('depositId', jsonData.data._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{petugasToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nasabah_id\": \"{{nasabahId}}\",\n  \"items\": [\n    {\n      \"waste_id\": \"{{wasteCategoryId}}\",\n      \"weight_kg\": 5.5\n    }\n  ],\n  \"notes\": \"Setoran sampah rutin pekanan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/deposits",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "deposits"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.2 Get Semua Transaksi Setoran (Petugas / Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{petugasToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/deposits?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "deposits"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.3 Get Setoran Saya (Nasabah)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{nasabahToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/deposits/my-deposits",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "deposits", "my-deposits"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.4 Get Detail Setoran By ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{nasabahToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/deposits/{{depositId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "deposits", "{{depositId}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Withdrawals (Penarikan Saldo)",
+			"item": [
+				{
+					"name": "5.1 Ajukan Penarikan Saldo (Nasabah)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data) {",
+									"    pm.collectionVariables.set('withdrawalId', jsonData.data._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{nasabahToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 15000,\n  \"method\": \"E_WALLET\",\n  \"destination\": {\n    \"provider\": \"GOPAY\",\n    \"account_number\": \"081255556666\",\n    \"account_name\": \"Budi Santoso\"\n  },\n  \"notes\": \"Tarik saldo ke GoPay\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/withdrawals",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "withdrawals"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.2 Get Pengajuan Penarikan Saya (Nasabah)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{nasabahToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/withdrawals/my-withdrawals",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "withdrawals", "my-withdrawals"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.3 Get Semua Permohonan Penarikan (Petugas / Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{petugasToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/withdrawals?status=PENDING",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "withdrawals"],
+							"query": [
+								{
+									"key": "status",
+									"value": "PENDING"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.4 Setujui/Tolak Penarikan (Petugas / Admin)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{petugasToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"APPROVED\",\n  \"notes\": \"Transfer GoPay telah diproses dan berhasil\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/withdrawals/{{withdrawalId}}/status",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "withdrawals", "{{withdrawalId}}", "status"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Ledger (Buku Tabungan)",
+			"item": [
+				{
+					"name": "6.1 Get Riwayat Mutasi Saldo Saya (Nasabah)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{nasabahToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/ledger/my-history",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "ledger", "my-history"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6.2 Get Riwayat Saldo User Spesifik (Admin / Petugas)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{petugasToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/ledger/user/{{nasabahId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "ledger", "user", "{{nasabahId}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "7. Reports (Laporan & Dasbor)",
+			"item": [
+				{
+					"name": "7.1 Get Statistik Dasbor (Admin & Petugas)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/reports/dashboard",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reports", "dashboard"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.2 Get Ringkasan Sampah (Admin & Petugas)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/reports/waste-summary",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reports", "waste-summary"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.3 Export CSV Setoran (Admin & Petugas)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/reports/export/deposits",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reports", "export", "deposits"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7.4 Export CSV Buku Besar (Admin & Petugas)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/reports/export/ledger",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "reports", "export", "ledger"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -9,7 +9,7 @@ const WithdrawalTransaction = require('../models/WithdrawalTransaction');
 const LedgerEntry = require('../models/LedgerEntry');
 
 const connectDB = async () => {
-  const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/bank_sampah';
+  const mongoURI = process.env.MONGO_URI || 'mongodb+srv://rakanhendianramadhan_db_user:DWZ7vW4ZjWMHmjne@cluster0.mnufzsz.mongodb.net';
   await mongoose.connect(mongoURI);
   console.log(`[Database Connected for Seeding]: ${mongoURI}`);
 };
