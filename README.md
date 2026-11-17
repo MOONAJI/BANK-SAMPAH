@@ -64,7 +64,7 @@ Browser
 | Backend | Node.js, Express 5 |
 | Database | MongoDB, Mongoose |
 | Autentikasi | JSON Web Token (JWT), bcryptjs |
-| Deployment | Vercel |
+| Deployment | VPS & Vercel |
 
 Backend menggunakan kontrol akses berbasis peran (RBAC). Password di-hash sebelum disimpan. Konfigurasi lokal menggunakan MongoDB lokal secara default; deployment dapat menggunakan MongoDB Atlas melalui `MONGO_URI`.
 
