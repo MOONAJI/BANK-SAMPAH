@@ -3,10 +3,12 @@
 Aplikasi web untuk mendigitalisasi pencatatan setoran sampah dan saldo nasabah. Petugas mencatat jenis serta berat sampah, sistem menghitung nilai setoran dan memperbarui saldo, lalu nasabah dapat melihat riwayat dan mengajukan penarikan.
 
 ## Aplikasi
-
-- **Aplikasi berjalan:** [bank-sampah-bay.vercel.app](https://bank-sampah-bay.vercel.app/)
+- **Video Presentasi:** https://drive.google.com/file/d/1d6Ej_aX0s6OKBPwytVNgekUoAlecX1qD/view?usp=sharing
+- **Link Web App:**
+    Vercell : https://bank-sampah-bay.vercel.app/
+    VPS     : https://paw.rakanroom.my.id/
 - **Repository:** [MOONAJI/BANK-SAMPAH](https://github.com/MOONAJI/BANK-SAMPAH)
-- **Laporan Milestone 1:** [Buka laporan](https://drive.google.com/file/d/1TLz5Z-wCFXOySfe3nDN5IuIpPzO4_eB/view?usp=drive_link)
+- **Laporan Milestone 1:** [Buka laporan](https://drive.google.com/file/d/1TLz5Z-wCFXOySfe3nDN5IuIpPzO4_eB/view?usp=drive_link)  
 
 > Harga sampah di aplikasi dapat berubah. Informasi lokasi dan jadwal pos pada halaman publik merupakan data contoh untuk keperluan proyek.
 
