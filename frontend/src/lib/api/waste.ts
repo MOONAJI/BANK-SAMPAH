@@ -1,6 +1,5 @@
 import "server-only";
 
-import { cacheLife, cacheTag } from "next/cache";
 import type { ApiResponse, WasteCategory, WasteGroup } from "@/types/api";
 import { apiFetch, authedFetch } from "./client";
 
@@ -11,9 +10,6 @@ export const WASTE_TAG = "waste-categories";
  * lewat updateTag(WASTE_TAG) setelah admin mengubah harga. null bila backend mati.
  */
 export async function getPublicWasteCategories(): Promise<WasteCategory[] | null> {
-  "use cache";
-  cacheLife("minutes");
-  cacheTag(WASTE_TAG);
   try {
     return (await apiFetch<ApiResponse<WasteCategory[]>>("/waste-categories")).data;
   } catch {
