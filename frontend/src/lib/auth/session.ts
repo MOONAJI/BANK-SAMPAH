@@ -18,7 +18,7 @@ export async function setToken(token: string) {
   (await cookies()).set(TOKEN_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.COOKIE_SECURE === "true",
     path: "/",
     maxAge: TOKEN_MAX_AGE,
   });
